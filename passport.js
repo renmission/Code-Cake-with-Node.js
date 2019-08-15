@@ -40,7 +40,7 @@ passport.use(new LocalStrategy({
 passport.use(new FacebookStrategy({
     clientID: '652615318580637',
     clientSecret: 'f1e2a4614a02abd4782fd7e18fb5a17f',
-    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    callbackURL: 'https://code-cake.herokuapp.com/auth/facebook/callback',
     profileFields: ['id', 'displayName', 'email']
 },
     (token, refreshToken, profile, done) => {
