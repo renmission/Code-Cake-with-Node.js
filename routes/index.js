@@ -9,11 +9,11 @@ var transporter = nodemailer.createTransport(config.mailer);
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Code4Share' });
+  res.render('index', { title: 'Code Cake' });
 });
 
 router.get('/about', (req, res, next) => {
-  res.render('about', { title: 'About Code4Share' })
+  res.render('about', { title: 'About Code Cake' })
 });
 
 router.route('/contact')
