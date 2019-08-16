@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var { check, validationResult } = require('express-validator');
-var User = require('../models/Users');
+var { check, validationResult, body } = require('express-validator');
+
+var bcrypt = require('bcryptjs');
+
 
 //LOGIN
 router.route('/login')
@@ -22,33 +24,47 @@ router.route('/register')
         res.render('register', { title: 'Register new account' });
     })
 
-.post([
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Email is required').isEmail(),
-    check('password', 'Password is required').not().isEmpty(),
-    check('password', 'Password does not match').custom((value, { req }) => (value === req.body.confirmPassword)).not().isEmpty()
+    .post([
+        check('name', 'Name is required').not().isEmpty(),
+        check('email', 'Email is required').isEmail(),
+        check('password', 'Password is required').not().isEmpty(),
+        check('confirmPassword', 'Passwords do not match').custom((value, { req }) => (value === req.body.password))
 
-], (req, res, next) => {
 
-    const errors = validationResult(req);
+    ], async (req, res) => {
 
-    if (!errors.isEmpty()) {
-        res.render('register', {
-            name: req.body.name,
-            email: req.body.email,
-            errorMessages: errors.array()
-        });
-    } else {
-        const user = new User();
-        user.name = req.body.name;
-        user.email = req.body.email;
-        user.setPassword(req.body.password);
-        user.save(err => {
-            if (err) return res.render('register', { errorMessages: err });
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.render('register', {
+                name: req.body.name,
+                email: req.body.email,
+                errorMessages: errors.array()
+            });
+        } else {
+
+            const { name, email, password, confirmPassword } = req.body;
+
+            user = new User({
+                name,
+                email,
+                password,
+                confirmPassword
+            });
+
+            //encrypt password
+            const salt = await bcrypt.genSalt(10);
+
+            user.password = await bcrypt.hash(password, salt);
+
+            await user.save();
+
             res.redirect('/login');
-        });
-    }
-});
+
+        }
+
+
+    });
 
 router.get('/logout', (req, res) => {
     req.logout();

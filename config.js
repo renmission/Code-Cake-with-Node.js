@@ -8,7 +8,7 @@ module.exports = {
             pass: 'gmail@ren01'
         }
     },
-    dbConnstring: 'mongodb+srv://code4share:code4share@cluster0-gvfva.mongodb.net/code4sharet?retryWrites=true&w=majority',
+    dbConnString: 'mongodb+srv://code4share:code4share@cluster0-gvfva.mongodb.net/code4sharet?retryWrites=true&w=majority',
     sessionKey: 'HelloCode4Share'
 
 };

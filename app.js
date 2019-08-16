@@ -14,18 +14,22 @@ var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var taskRouter = require('./routes/task');
 
+global.User = require('./models/Users');
+global.Task = require('./models/Task');
 
 require('./passport');
 var config = require('./config');
 
 //DB connection
-mongoose.connect(config.dbConnstring, {
+mongoose.connect(config.dbConnString, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false
+}, (err) => {
+    if (err) console.log('Connection Error');
+    console.log('Connected to DB');
 });
-global.User = require('./models/Users');
-global.Task = require('./models/Task');
+
 
 var app = express();
 
