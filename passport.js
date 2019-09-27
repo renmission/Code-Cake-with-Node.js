@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/Users');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
+var bcrypt = require('bcryptjs');
+
 passport.serializeUser((user, done) => {
     done(null, user._id);
 });
@@ -13,22 +15,26 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-passport.use(new LocalStrategy({
-    usernameField: 'email'
-},
-    (username, password, done) => {
-        User.findOne({ email: username }, (err, user) => {
-            if (err) return done(err);
-            if (!user) {
-                return done(null, false, {
-                    message: 'Incorrect username and password'
-                });
+
+//APP LOGIN
+passport.use(new LocalStrategy({ usernameField: 'email' }, (username, password, done) => {
+
+    User.findOne({ email: username }).then(user => {
+        if (!user) return done(null, false, { message: 'No user found' });
+
+        bcrypt.compare(password, user.password, (err, matched) => {
+
+            if (err) return err;
+
+            if (matched) {
+                return done(null, user);
+            } else {
+                return done(null, false, { message: 'Incorrect password' });
             }
 
-            return done(null, user);
-        })
-    }
-));
+        });
+    });
+}));
 
 
 //PASSPORT FACEBOOK

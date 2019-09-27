@@ -12,10 +12,9 @@ router.route('/login')
         res.render('login', { title: 'login your account' });
     })
     .post(passport.authenticate('local', {
+        successRedirect: '/',
         failureRedirect: '/login'
-    }), (req, res) => {
-        res.redirect('/');
-    })
+    }));
 
 
 //REGISTER
